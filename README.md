@@ -30,7 +30,9 @@ Reporting Manager (Review & Adjust)
 HR (All forms view + Approval gate)
 
 
-│ (if approved)
+(if approved)
+
+│ 
 ▼
 
 
@@ -144,57 +146,8 @@ Root/
 └─ wwwroot/ # Static assets (bootstrap, jquery, css, images)
 
 
-yaml
-Copy code
-
 ---
 
-## 🚀 Getting Started (Local)
-
-### Prerequisites
-- **.NET 8 SDK**
-- SQL Server (Developer/Express or a container)
-- Git
-
-### 1) Clone & restore
-```powershell
-git clone https://github.com/mohamed-nada77/AppraisalForm2025.git
-cd AppraisalForm2025
-dotnet restore
-2) Configure secrets (keep real secrets out of git)
-Use User Secrets for local development:
-
-powershell
-Copy code
-dotnet user-secrets init
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=.;Database=AppraisalPortal;Trusted_Connection=True;TrustServerCertificate=True"
-# If using certificate passwords, tokens, SMTP, etc.:
-# dotnet user-secrets set "Certificates:Password" "YOUR_CERT_PASSWORD"
-Create an example file for collaborators (no secrets):
-
-json
-Copy code
-// appsettings.json.example
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "<set via user-secrets or environment>"
-  },
-  "Logging": {
-    "LogLevel": { "Default": "Information", "Microsoft.AspNetCore": "Warning" }
-  }
-}
-3) Database
-powershell
-Copy code
-dotnet ef database update
-4) Seed roles & demo users (optional)
-SeedData can set up baseline roles (Admin/Manager/HR/CEO) and example scopes. Adjust SeedData as needed, then run the app so seeding executes.
-
-5) Run
-powershell
-Copy code
-dotnet run
-Visit https://localhost:5001 (or the port shown in output).
 
 🔐 Roles & Access
 Employee: Self-appraisal, can revisit before submission (if cycle open).
@@ -256,16 +209,56 @@ Email/Teams notifications for stage transitions
 
 Analytics: distribution charts, outliers, year-over-year trends
 
+
+
+## 🚀 Getting Started (Local)
+
+### Prerequisites
+- **.NET 8 SDK**
+- SQL Server (Developer/Express or a container)
+- Git
+
+### 1) Clone & restore
+```powershell
+git clone https://github.com/mohamed-nada77/AppraisalForm2025.git
+cd AppraisalForm2025
+dotnet restore
+2) Configure secrets (keep real secrets out of git)
+Use User Secrets for local development:
+
+powershell
+Copy code
+dotnet user-secrets init
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=.;Database=AppraisalPortal;Trusted_Connection=True;TrustServerCertificate=True"
+# If using certificate passwords, tokens, SMTP, etc.:
+# dotnet user-secrets set "Certificates:Password" "YOUR_CERT_PASSWORD"
+Create an example file for collaborators (no secrets):
+
+json
+Copy code
+// appsettings.json.example
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "<set via user-secrets or environment>"
+  },
+  "Logging": {
+    "LogLevel": { "Default": "Information", "Microsoft.AspNetCore": "Warning" }
+  }
+}
+3) Database
+powershell
+Copy code
+dotnet ef database update
+4) Seed roles & demo users (optional)
+SeedData can set up baseline roles (Admin/Manager/HR/CEO) and example scopes. Adjust SeedData as needed, then run the app so seeding executes.
+
+5) Run
+powershell
+Copy code
+dotnet run
+Visit https://localhost:5001 (or the port shown in output).
+
+
+
 🤝 Contributing
 Create a feature branch.
-
-Keep secrets out of commits (.gitignore + user-secrets).
-
-Add/Update EF migrations where applicable.
-
-Include brief notes in PR description.
-
-- **Remote already exists** → Use `git remote set-url origin https://github.com/mohamed-nada77/AppraisalForm2025.git`.
-
-If you hit any error, paste the exact message and I’ll fix it right away.
-::contentReference[oaicite:0]{index=0}
