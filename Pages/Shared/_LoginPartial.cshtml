@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    var currentUser = await UserManager.GetUserAsync(User);
+    var display = string.IsNullOrWhiteSpace(currentUser?.DisplayName)
+        ? (currentUser?.UserName ?? User.Identity?.Name)
+        : currentUser!.DisplayName;
+
+    <div class="d-flex align-items-center justify-content-between gap-2">
+        <div class="small text-muted truncate" title="@display">
+            Signed in as <strong>@display</strong>
+        </div>
+        <a class="btn btn-sm btn-outline-secondary" asp-page="/Account/ForceChange">Change password</a>
+        <form class="m-0" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="~/">
+            <button type="submit" class="btn btn-sm btn-outline-secondary">Logout</button>
+        </form>
+    </div>
+}

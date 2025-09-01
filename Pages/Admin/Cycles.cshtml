@@ -1,0 +1,84 @@
+﻿@*/Pages/Admin/Cycles.cshtml*@
+
+@page
+@model AppraisalPortal.Pages.Admin.CyclesModel
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+
+@{
+    ViewData["Title"] = "Appraisal Cycles";
+}
+
+<h2 class="mb-3">Appraisal Cycles</h2>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="post" asp-page-handler="Create" class="row g-2 align-items-end">
+            <div class="col-12 col-md-4">
+                <label asp-for="Name" class="form-label">Name</label>
+                <input asp-for="Name" class="form-control" />
+            </div>
+            <div class="col-6 col-md-3">
+                <label asp-for="Start" class="form-label">Start</label>
+                <input asp-for="Start" type="date" class="form-control" />
+            </div>
+            <div class="col-6 col-md-3">
+                <label asp-for="End" class="form-label">End</label>
+                <input asp-for="End" type="date" class="form-control" />
+            </div>
+            <div class="col-12 col-md-2 d-grid">
+                <button class="btn btn-primary">Create</button>
+            </div>
+        </form>
+        @if (TempData["Msg"] is string m)
+        {
+            <div class="alert alert-success mt-3 mb-0">@m</div>
+        }
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body table-responsive">
+        <table class="table table-sm align-middle">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Dates</th>
+                    <th>Status</th>
+                    <th class="text-center" title="Total Forms">Forms</th>
+                    <th class="text-center" title="Submitted by Employee">Submitted</th>
+                    <th class="text-center" title="Manager Reviewed">MgrReviewed</th>
+                    <th style="width: 280px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.Cycles)
+                {
+                    <tr>
+                        <td class="fw-semibold">@c.Name</td>
+                        <td>@c.Start:d – @c.End:d</td>
+                        <td>@c.Status</td>
+                        <td class="text-center">@Model.Counts[c.Id].Total</td>
+                        <td class="text-center">@Model.Counts[c.Id].Submitted</td>
+                        <td class="text-center">@Model.Counts[c.Id].MgrReviewed</td>
+                        <td class="text-end">
+                            <div class="btn-group">
+                                <form method="post" asp-page-handler="GenerateForms" class="d-inline">
+                                    <input type="hidden" name="id" value="@c.Id" />
+                                    <button class="btn btn-secondary btn-sm" title="Create forms for all employees">
+                                        Generate Forms
+                                    </button>
+                                </form>
+                                <a class="btn btn-outline-primary btn-sm" asp-page="/HR/All" title="View all (HR)">HR View</a>
+                                <form method="post" asp-page-handler="Delete" class="d-inline" onsubmit="return confirm('Delete this cycle and ALL related forms, KPIs, responsibilities and ratings?')">
+                                    <input type="hidden" name="id" value="@c.Id" />
+                                    <button class="btn btn-outline-danger btn-sm">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

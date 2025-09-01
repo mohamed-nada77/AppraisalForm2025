@@ -1,0 +1,117 @@
+﻿@page
+@model AppraisalPortal.Pages.Admin.ManagerCheckModel
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+
+@{
+    ViewData["Title"] = "Manager Checker";
+}
+
+<h2 class="mb-3">Reporting Manager Check</h2>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-2">
+            <div class="col-12 col-sm-6 col-md-4">
+                <label class="form-label">Emp Code</label>
+                <input name="empCode" value="@Model.QueryEmpCode" class="form-control" />
+            </div>
+            <div class="col-12 col-sm-6 col-md-3 align-self-end d-grid">
+                <button class="btn btn-primary">Check</button>
+            </div>
+        </form>
+        @if (!string.IsNullOrWhiteSpace(Model.Error))
+        {
+            <div class="alert alert-danger mt-3 mb-0">@Model.Error</div>
+        }
+    </div>
+</div>
+
+@if (Model.Target != null)
+{
+    <div class="card shadow-sm">
+        <div class="card-header fw-semibold">Result</div>
+        <div class="card-body">
+            <div class="row g-2">
+                <div class="col-md-4"><strong>Manager:</strong> @Model.Target.Name (@Model.Target.EmpCode)</div>
+                <div class="col-md-4"><strong>Department:</strong> @Model.Target.Department</div>
+                <div class="col-md-4"><strong>Designation:</strong> @Model.Target.Designation</div>
+            </div>
+
+            <hr />
+
+            <div class="mb-2">
+                <strong>Is Reporting Manager:</strong>
+                @(Model.IsReportingManager ? "Yes" : "No")
+                @if (Model.IsReportingManagerByScope)
+                {
+                    <span class="badge bg-secondary ms-1">Scope</span>
+                }
+                @if (Model.IsReportingManagerByTeam)
+                {
+                    <span class="badge bg-secondary ms-1">Has Directs</span>
+                }
+            </div>
+
+            @if (Model.GmDepartments?.Any() == true)
+            {
+                <div class="mb-3">
+                    <strong>GM Departments:</strong> @string.Join(", ", Model.GmDepartments)
+                </div>
+            }
+
+            <div class="row g-3">
+                <div class="col-12 col-lg-6">
+                    <h6 class="mb-2">Directs (Strong link – ManagerId)</h6>
+                    @if (Model.DirectsStrong.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle">
+                                <thead><tr><th>EmpCode</th><th>Name</th><th>Department</th></tr></thead>
+                                <tbody>
+                                    @foreach (var e in Model.DirectsStrong)
+                                    {
+                                        <tr><td>@e.EmpCode</td><td>@e.Name</td><td>@e.Department</td></tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+
+                        <div class="text-muted">None.</div>
+                    }
+                </div>
+
+                <div class="col-12 col-lg-6">
+                    <h6 class="mb-2">Directs (Weak link – EmpCode/Name cache)</h6>
+                    @if (Model.DirectsWeak.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle">
+                                <thead><tr><th>EmpCode</th><th>Name</th><th>Department</th><th>Link</th></tr></thead>
+                                <tbody>
+                                    @foreach (var e in Model.DirectsWeak)
+                                    {
+                                        <tr>
+                                            <td>@e.EmpCode</td>
+                                            <td>@e.Name</td>
+                                            <td>@e.Department</td>
+                                            <td>@e.LinkType</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+
+                        <div class="text-muted">None.</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

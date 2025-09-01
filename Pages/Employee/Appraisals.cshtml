@@ -1,0 +1,21 @@
+﻿@*/Pages/Employee/Appraisals.cshtml*@
+
+@page
+@model AppraisalPortal.Pages.EmployeePages.MyAppraisalsModel
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Employee,Manager,HR,CEO,Admin")]
+
+<h2>My Appraisals</h2>
+<table class="table table-sm">
+    <thead><tr><th>Cycle</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var f in Model.Forms)
+        {
+            <tr>
+                <td>@f.Cycle.Name</td>
+                <td>@f.Status</td>
+                <td><a class="btn btn-sm btn-primary" href="/Employee/Self?id=@f.Id">Open</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

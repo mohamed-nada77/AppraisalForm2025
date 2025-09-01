@@ -1,0 +1,89 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> SignInManager
+@inject ApplicationDbContext Db
+@inject UserManager<AppUser> UserManager
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Appraisal Portal - @ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="shell" class="d-flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="border-end d-flex flex-column bg-white" style="width:260px;min-height:100vh">
+            <div class="p-4 brand">
+                <a asp-page="/Index" class="d-inline-block text-decoration-none">
+                    <img src="/img/logo.png" alt="Alpago" style="max-height:64px" class="mb-2">
+                </a>
+                <div class="section-title">Appraisal Portal</div>
+            </div>
+
+            <nav class="nav flex-column gap-1 px-3">
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    var looksManager = User.IsInRole("Manager") || User.IsInRole("Admin");
+                    if (!looksManager)
+                    {
+                        var uid = UserManager.GetUserId(User);
+                        var me = await Db.Employees.AsNoTracking().FirstOrDefaultAsync(e => e.UserId == uid);
+                        if (me != null)
+                        {
+                            var myCode = (me.EmpCode ?? "").Trim();
+                            var myName = (me.Name ?? "").Trim();
+                            looksManager =
+                            await Db.ManagerScopes.AnyAsync(s => s.ManagerEmployeeId == me.Id) ||
+                            await Db.Employees.AnyAsync(e =>
+                            e.Id != me.Id &&
+                            (e.ManagerId == me.Id ||
+                            (e.ManagerEmpCode != null && e.ManagerEmpCode.Trim() == myCode) ||
+                            (e.ManagerNameCached != null && e.ManagerNameCached.Trim() == myName)));
+                        }
+                    }
+
+                    if (User.IsInRole("Admin"))
+                    {
+                        <a class="nav-link @(Context.Request.Path.Value?.Contains("/Admin/Import") == true ? "active" : "")" asp-page="/Admin/Import"><i class="bi bi-upload"></i> Import</a>
+                        <a class="nav-link @(Context.Request.Path.Value?.Contains("/Admin/Cycles") == true ? "active" : "")" asp-page="/Admin/Cycles"><i class="bi bi-calendar2-range"></i> Cycles</a>
+                        <a class="nav-link @(Context.Request.Path.Value?.Contains("/Admin/Scopes") == true ? "active" : "")" asp-page="/Admin/Scopes"><i class="bi bi-diagram-3"></i> Scopes</a>
+                        <a class="nav-link @(Context.Request.Path.Value?.Contains("/Admin/Passwords") == true ? "active" : "")" asp-page="/Admin/Passwords"><i class="bi bi-key"></i> Passwords</a>
+                        <a class="nav-link @(Context.Request.Path.Value?.Contains("/Admin/ManagerCheck") == true ? "active" : "")" asp-page="/Admin/ManagerCheck"><i class="bi bi-search"></i> Manager Check</a>
+                    }
+                    if (User.IsInRole("Employee"))
+                    {
+                        <a class="nav-link @(Context.Request.Path.Value?.Contains("/Employee/") == true ? "active" : "")" asp-page="/Employee/Appraisals"><i class="bi bi-person-badge"></i> My Appraisals</a>
+                    }
+                    if (looksManager)
+                    {
+                        <a class="nav-link @(Context.Request.Path.Value?.Contains("/Manager/") == true ? "active" : "")" asp-page="/Manager/Inbox"><i class="bi bi-inbox"></i> Manager Inbox</a>
+                    }
+                    if (User.IsInRole("HR") || User.IsInRole("CEO") || User.IsInRole("Admin"))
+                    {
+                        <a class="nav-link @(Context.Request.Path.Value?.Contains("/Reports/") == true ? "active" : "")" asp-page="/Reports/Summary"><i class="bi bi-clipboard-data"></i> Reports</a>
+                    }
+                }
+            </nav>
+
+            <div class="mt-auto border-top px-3 py-3">
+                <partial name="_LoginPartial" />
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="flex-grow-1">
+            <div class="container-fluid py-4">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    <div id="toastHost">@await Html.PartialAsync("_Toasts")</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

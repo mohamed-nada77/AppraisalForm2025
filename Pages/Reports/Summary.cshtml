@@ -1,0 +1,270 @@
+﻿@* /Pages/Reports/Summary.cshtml *@
+@page
+@model AppraisalPortal.Pages.Reports.SummaryModel
+@{
+    ViewData["Title"] = "Reports – Summary";
+}
+
+<div class="row g-3">
+    <!-- LEFT PANE -->
+    <div class="col-12 col-lg-5 col-xl-4">
+        @if (Model.IsHR || Model.IsAdmin)
+        {
+            <h2 class="h5 mb-2">Awaiting HR Approval</h2>
+            @if (Model.Awaiting.Count == 0)
+            {
+                <div class="text-muted mb-3">Nothing is awaiting approval.</div>
+            }
+            else
+            {
+                foreach (var dept in Model.Awaiting.Keys)
+                {
+                    var list = Model.Awaiting[dept];
+                    <div class="mb-3">
+                        <div class="small text-uppercase text-muted mb-1">@dept (@list.Count)</div>
+                        <div class="list-group">
+                            @foreach (var f in list)
+                            {
+                                <a class="list-group-item list-group-item-action"
+                                   asp-page="/Reports/Summary" asp-route-id="@f.Id">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="fw-semibold">@f.EmpName (@f.EmpCode)</div>
+                                            <div class="small text-muted">@f.CycleName — @Model.ShortDate(f.Start) – @Model.ShortDate(f.End)</div>
+                                        </div>
+                                        <span class="badge bg-warning text-dark">MgrReviewed</span>
+                                    </div>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+
+            <hr />
+        }
+
+        <h2 class="h5 mb-2">Approved (visible to CEO)</h2>
+        @if (Model.Approved.Count == 0)
+        {
+            <div class="text-muted">No approved appraisals.</div>
+        }
+        else
+        {
+            foreach (var dept in Model.Approved.Keys)
+            {
+                var list = Model.Approved[dept];
+                <div class="mb-3">
+                    <div class="small text-uppercase text-muted mb-1">@dept (@list.Count)</div>
+                    <div class="list-group">
+                        @foreach (var f in list)
+                        {
+                            <a class="list-group-item list-group-item-action list-group-item-success"
+                               asp-page="/Reports/Summary" asp-route-id="@f.Id">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-semibold">@f.EmpName (@f.EmpCode)</div>
+                                        <div class="small text-muted">@f.CycleName — @Model.ShortDate(f.Start) – @Model.ShortDate(f.End)</div>
+                                    </div>
+                                    <span class="badge bg-success">Approved</span>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <!-- RIGHT PANE -->
+    <div class="col-12 col-lg-7 col-xl-8">
+        @if (!string.IsNullOrWhiteSpace(Model.NotFoundMessage))
+        {
+            <div class="alert alert-warning">@Model.NotFoundMessage</div>
+        }
+        else if (Model.Form == null)
+        {
+            <div class="text-muted">
+                <h2 class="h5">Select a form</h2>
+                <p>Choose a form on the left to review its evaluation summary.</p>
+            </div>
+        }
+        else
+        {
+            var f = Model.Form;
+
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h2 class="h5 mb-0">Employee Performance Evaluation Summary</h2>
+                <div class="d-flex gap-2">
+                    <a class="btn btn-sm btn-outline-secondary" asp-page="/Reports/FormPdf" asp-route-id="@f.Id">Download PDF</a>
+                    <a class="btn btn-sm btn-outline-secondary" asp-page="/Reports/BulkPdf" asp-route-id="@f.Id">Bulk Download</a>
+                </div>
+            </div>
+
+            <!-- 1) Employee Info -->
+            <div class="card mb-3">
+                <div class="card-header">Section 1: Employee Information</div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-md-6"><strong>Employee Name:</strong> @f.Employee.Name</div>
+                        <div class="col-md-6"><strong>Reporting Manager:</strong> @(Model.ManagerName ?? "—")</div>
+                        <div class="col-md-6"><strong>Employee ID:</strong> @f.Employee.EmpCode</div>
+                        <div class="col-md-6"><strong>Date of Joining:</strong> @(f.Employee.DateOfJoining?.ToString("dd/MM/yyyy") ?? "—")</div>
+                        <div class="col-md-6"><strong>Designation:</strong> @(f.Employee.Designation ?? "—")</div>
+                        <div class="col-md-6"><strong>Review Period:</strong> @f.Cycle.Name (@f.Cycle.Start.ToString("dd/MM/yyyy") – @f.Cycle.End.ToString("dd/MM/yyyy"))</div>
+                        <div class="col-md-6"><strong>Department:</strong> @(f.Employee.Department ?? "—")</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2) Self evaluation (NOT counted) -->
+            <div class="card mb-3">
+                <div class="card-header">Section 2: Employee Self-Evaluation (Not used in scoring)</div>
+                <div class="card-body">
+                    @if (Model.SelfRows.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle">
+                                <thead><tr><th>Key Responsibility</th><th>Description</th><th class="text-center" style="width:12%">Achievement (%)</th></tr></thead>
+                                <tbody>
+                                    @foreach (var r in Model.SelfRows)
+                                    {
+                                        <tr>
+                                            <td>@r.Title</td>
+                                            <td>@(string.IsNullOrWhiteSpace(r.Description) ? "—" : r.Description)</td>
+                                            <td class="text-center">@r.Achievement</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(f.SelfComments))
+                        {
+                            <div class="mt-2"><strong>Employee Comments:</strong> @f.SelfComments</div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-muted">No self-evaluation submitted.</div>
+                    }
+                </div>
+            </div>
+
+            <!-- 3) Manager KPI -->
+            <div class="card mb-3">
+                <div class="card-header">Section 3: Manager KPI Evaluation (70%)</div>
+                <div class="card-body">
+                    @if (Model.KpiRows.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle">
+                                <thead>
+                                    <tr>
+                                        <th style="width:50%">KPI</th>
+                                        <th style="width:30%">Actual Performance</th>
+                                        <th class="text-center" style="width:20%">Score (0–100)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var r in Model.KpiRows)
+                                    {
+                                        <tr>
+                                            <td>@r.Description</td>
+                                            <td>@(string.IsNullOrWhiteSpace(r.Actual) ? "—" : r.Actual)</td>
+                                            <td class="text-center">@r.Score</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-2">
+                            <strong>Total KPI (average):</strong> @Model.KpiTotal / 100
+                            <span class="ms-3"><strong>Weighted (70%):</strong> @Model.KpiWeighted</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-muted">No KPI items.</div>
+                    }
+                </div>
+            </div>
+
+            <!-- 4) Soft skills -->
+            <div class="card mb-3">
+                <div class="card-header">Section 4: Soft Skills Evaluation (30%)</div>
+                <div class="card-body">
+                    @if (Model.SoftRows.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle">
+                                <thead><tr><th>Attribute</th><th class="text-center" style="width:12%">Score (1–10)</th></tr></thead>
+                                <tbody>
+                                    @foreach (var r in Model.SoftRows)
+                                    {
+                                        <tr><td>@r.Attribute</td><td class="text-center">@r.Score</td></tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-2">
+                            <strong>Total Soft Skills:</strong> @Model.SoftPctTotal / 100
+                            <span class="ms-3"><strong>Weighted (30%):</strong> @Model.SoftWeighted</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-muted">No soft-skill rows.</div>
+                    }
+                </div>
+            </div>
+
+            <!-- 5) Final -->
+            <div class="card mb-3">
+                <div class="card-header">Section 5: Final Summary & Comments</div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-md-4"><strong>Manager Score (avg KPI):</strong> @Model.KpiTotal</div>
+                        <div class="col-md-4"><strong>Final Score:</strong> @Model.FinalWeighted.ToString("0.##")</div>
+                    </div>
+                    <div class="mt-2 text-muted small">
+                        Computed: KPI @Model.KpiWeighted + Soft @Model.SoftWeighted = <strong>@Model.FinalWeighted</strong>
+                    </div>
+
+                    <div class="mt-3">
+                        <div class="mb-2"><strong>Manager Comments:</strong> @(string.IsNullOrWhiteSpace(f.ManagerComments) ? "—" : f.ManagerComments)</div>
+                        <div class="mb-2"><strong>HR Comments:</strong> @(string.IsNullOrWhiteSpace(f.HRComments) ? "—" : f.HRComments)</div>
+                        <div><strong>CEO Comments:</strong> @(string.IsNullOrWhiteSpace(f.CEOComments) ? "—" : f.CEOComments)</div>
+                    </div>
+
+                    @* HR Approval (only when waiting) *@
+                    @if ((Model.IsHR || Model.IsAdmin) && f.Status == "MgrReviewed")
+                    {
+                        <hr />
+                        <form method="post" asp-page-handler="HrApprove" asp-antiforgery="true" class="vstack gap-2 mt-2">
+                            <input type="hidden" name="id" value="@f.Id" />
+                            <label class="form-label">Add HR comment (optional)</label>
+                            <textarea class="form-control" name="hrComment" rows="3">@f.HRComments</textarea>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary">Approve & Publish to CEO</button>
+                            </div>
+                        </form>
+                    }
+
+                    @* CEO optional comment (CEO or Admin) *@
+                    @if (Model.IsCEO || Model.IsAdmin)
+                    {
+                        <hr />
+                        <form method="post" asp-page-handler="CeoComment" asp-antiforgery="true" class="vstack gap-2 mt-2">
+                            <input type="hidden" name="id" value="@f.Id" />
+                            <label class="form-label">CEO Comment (optional)</label>
+                            <textarea class="form-control" name="ceoComment" rows="3">@f.CEOComments</textarea>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-dark">Save CEO Comment</button>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

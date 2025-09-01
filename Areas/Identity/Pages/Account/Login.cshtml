@@ -1,0 +1,46 @@
+﻿@*/Areas/Identity/Pages/Account/Login.cshtml*@
+
+@page
+@model AppraisalPortal.Areas.Identity.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Sign in";
+}
+
+<div class="d-flex align-items-center justify-content-center" style="min-height: calc(100vh - 2rem);">
+    <div class="col-11 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4 p-md-5">
+                <h1 class="h4 mb-4 text-center">Sign in</h1>
+
+                <form method="post" asp-antiforgery="true" class="vstack gap-3">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+
+                    <div>
+                        <label asp-for="Input.EmpCode" class="form-label">Emp Code</label>
+                        <input asp-for="Input.EmpCode" class="form-control" autocomplete="username" />
+                        <span asp-validation-for="Input.EmpCode" class="text-danger"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Input.Password" class="form-label">Password</label>
+                        <input asp-for="Input.Password" class="form-control" autocomplete="current-password" />
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-check">
+                        <input asp-for="Input.RememberMe" class="form-check-input" />
+                        <label asp-for="Input.RememberMe" class="form-check-label"></label>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Sign in</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

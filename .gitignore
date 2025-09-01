@@ -1,0 +1,19 @@
+# Build/IDE
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# Logs & temp
+*.log
+*.tmp
+
+# Secrets
+appsettings.json
+appsettings.*.local.json
+keys/
+certs/
+
+# Local DBs (if any)
+Data/*.db*

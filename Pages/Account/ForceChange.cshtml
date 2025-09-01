@@ -1,0 +1,49 @@
+﻿@*/Pages/Account/ForceChange.cshtml*@
+
+@page
+@model AppraisalPortal.Pages.Account.ForceChangeModel
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+@{
+    ViewData["Title"] = "Change your password";
+}
+
+<div class="col-12 col-md-6 col-lg-5">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h1 class="h5 mb-3">Change your password</h1>
+            <p class="text-muted">For security, you must set a new password before using the portal.</p>
+
+            <form method="post" class="vstack gap-3">
+                <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+
+                <div>
+                    <label asp-for="Input.Current" class="form-label">Current password</label>
+                    <input asp-for="Input.Current" type="password" class="form-control" />
+                    <span asp-validation-for="Input.Current" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Input.New" class="form-label">New password</label>
+                    <input asp-for="Input.New" type="password" class="form-control" />
+                    <span asp-validation-for="Input.New" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Input.Confirm" class="form-label">Confirm new password</label>
+                    <input asp-for="Input.Confirm" type="password" class="form-control" />
+                    <span asp-validation-for="Input.Confirm" class="text-danger"></span>
+                </div>
+
+                <div class="d-grid">
+                    <button class="btn btn-primary">Update password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

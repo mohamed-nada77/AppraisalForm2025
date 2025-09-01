@@ -1,0 +1,279 @@
+﻿@* /Pages/Manager/Review.cshtml *@
+@page
+@model AppraisalPortal.Pages.ManagerPages.ReviewModel
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Manager,Admin")]
+
+<h2 class="mb-3">Manager Review – @Model.EmployeeName (@Model.CycleName)</h2>
+
+<div class="d-flex gap-2 mb-3">
+    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnSelfEval">
+        View Employee Self Evaluation
+    </button>
+</div>
+
+<!-- Stats -->
+<div class="row g-3 mb-3">
+    <div class="col-md-4">
+        <div class="stat bg-white p-3 rounded border">
+            <div class="d-flex justify-content-between">
+                <div class="label text-muted">KPI (avg)</div><div class="value fw-semibold" id="kpiAvgVal">0</div>
+            </div>
+            <div class="progress mt-2">
+                <div class="progress-bar" id="kpiMeterFill" style="width:0%"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat bg-white p-3 rounded border">
+            <div class="d-flex justify-content-between">
+                <div class="label text-muted">Soft Skills</div><div class="value fw-semibold" id="softPctVal">0</div>
+            </div>
+            <div class="progress mt-2">
+                <div class="progress-bar" id="softMeterFill" style="width:0%"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat bg-white p-3 rounded border">
+            <div class="d-flex justify-content-between">
+                <div class="label text-muted">Final (70/30)</div><div class="value fw-semibold" id="finalVal">0</div>
+            </div>
+            <div class="progress mt-2">
+                <div class="progress-bar" id="finalMeterFill" style="width:0%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="post" asp-antiforgery="true" class="mb-4">
+    <input type="hidden" name="id" value="@Model.FormId" />
+
+    <!-- KPI -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header fw-semibold">Part 1 – Key Performance Indicators (KPI) – 70%</div>
+        <div class="card-body">
+            <p class="form-hint mb-2 text-muted">Enter exactly 5 KPIs. Scores must be between 0–100. All fields are required.</p>
+
+            <div class="table-responsive">
+                <table class="table table-sm table-clean align-middle" id="kpiTable">
+                    <thead>
+                        <tr><th style="width:42%">KPI Description</th><th>Actual Performance</th><th style="width:16%">Score (0–100)</th></tr>
+                    </thead>
+                    <tbody>
+                        @for (var i = 0; i < 5; i++)
+                        {
+                            var desc = (i < Model.KPI.Count ? Model.KPI[i].Description : "");
+                            var act = (i < Model.KPI.Count ? Model.KPI[i].Actual : "");
+                            var sc = (i < Model.KPI.Count ? Model.KPI[i].Score : 0);
+                            <tr>
+                                <td>
+                                    <input class="form-control form-control-sm kpi-desc" name="KPI[@i].Description" value="@desc" required />
+                                    <div class="invalid-feedback">Required.</div>
+                                </td>
+                                <td>
+                                    <input class="form-control form-control-sm kpi-act" name="KPI[@i].Actual" value="@act" required />
+                                    <div class="invalid-feedback">Required.</div>
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control form-control-sm kpi-score" name="KPI[@i].Score" value="@sc" min="0" max="100" required />
+                                    <div class="invalid-feedback">0–100 required.</div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-2 fw-semibold">
+                Total KPI (average): <span id="kpiAvgText">0</span> / 100
+                <span class="ms-3">Weighted (70%): <span id="kpiWeightedText">0.00</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Soft -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header fw-semibold">Part 2 – Soft Skills – 30%</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-sm table-clean align-middle">
+                    <thead><tr><th>Attribute</th><th style="width:18%">Score (1–10)</th></tr></thead>
+                    <tbody>
+                        @for (var i = 0; i < Model.Soft.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    @Model.Soft[i].Attribute
+                                    <input type="hidden" name="Soft[@i].Attribute" value="@Model.Soft[i].Attribute" />
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control form-control-sm soft-score" name="Soft[@i].Score" value="@Model.Soft[i].Score" min="1" max="10" required />
+                                    <div class="invalid-feedback">1–10 required.</div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-2 fw-semibold">
+                Total Soft: <span id="softPctText">0</span> / 100
+                <span class="ms-3">Weighted (30%): <span id="softWeightedText">0.00</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comments -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-header fw-semibold">Manager’s Final Comments & Recommendations *</div>
+        <div class="card-body">
+            <textarea class="form-control" name="ManagerComments" rows="3" required>@Model.ManagerComments</textarea>
+            <div class="invalid-feedback">Please add a short summary.</div>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+        <div class="fw-semibold me-auto">
+            Final Score: <span id="finalText">0.00</span> / 100
+        </div>
+        <button type="submit" formaction="?handler=Save" class="btn btn-outline-secondary">Save as Draft</button>
+        <button type="submit" formaction="?handler=Submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+
+<!-- Self Evaluation Modal -->
+<div class="modal fade" id="selfEvalModal" tabindex="-1" aria-labelledby="selfEvalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="selfEvalLabel">Employee Self Evaluation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="selfEvalLoading" class="text-muted">Loading…</div>
+                <div class="table-responsive d-none" id="selfEvalTableWrap">
+                    <table class="table table-sm align-middle">
+                        <thead><tr><th style="width:35%">Responsibility</th><th>Description</th><th style="width:14%">Achieved (%)</th></tr></thead>
+                        <tbody id="selfEvalBody"></tbody>
+                    </table>
+                </div>
+                <div class="text-muted d-none" id="selfEvalEmpty">No self-evaluation found.</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+          const clamp = (v,min,max)=>Math.min(max,Math.max(min,Number(v)||0));
+          const sum = arr => arr.reduce((a,b)=>a+b,0);
+
+          const kpiInputs  = [...document.querySelectorAll('.kpi-score')];
+          const softInputs = [...document.querySelectorAll('.soft-score')];
+          const reqInputs  = [...document.querySelectorAll('input[required], textarea[required]')];
+
+          function validate(){
+            // exactly 5 KPI rows and all fields required
+            document.querySelectorAll('#kpiTable tbody tr').forEach(tr=>{
+              tr.querySelectorAll('input').forEach(inp=>{
+                const isScore = inp.classList.contains('kpi-score');
+                const v = Number(inp.value);
+                const ok = inp.value.trim() && (!isScore || (v>=0 && v<=100));
+                inp.classList.toggle('is-invalid', !ok);
+              });
+            });
+            softInputs.forEach(inp=>{
+              const v = clamp(inp.value,1,10);
+              if(v!=inp.value) inp.value=v;
+              inp.classList.toggle('is-invalid', !inp.value.trim());
+            });
+            reqInputs.forEach(inp=>{
+              inp.classList.toggle('is-invalid', !inp.value.trim());
+            });
+          }
+
+          function recalc(){
+            validate();
+
+            const kVals = kpiInputs.map(i=>clamp(i.value,0,100));
+            const kpiAvg = kVals.length ? Math.round(sum(kVals)/kVals.length) : 0;
+            const kWeighted = (kpiAvg * 0.70).toFixed(2);
+
+            const sVals = softInputs.map(i=>clamp(i.value,1,10));
+            const softPct = sVals.length ? Math.round((sum(sVals)/(sVals.length*10))*100) : 0;
+            const sWeighted = (softPct * 0.30).toFixed(2);
+
+            const final = (parseFloat(kWeighted)+parseFloat(sWeighted)).toFixed(2);
+
+            // text
+            document.getElementById('kpiAvgText').textContent = kpiAvg;
+            document.getElementById('kpiWeightedText').textContent = kWeighted;
+            document.getElementById('softPctText').textContent = softPct;
+            document.getElementById('softWeightedText').textContent = sWeighted;
+            document.getElementById('finalText').textContent = final;
+
+            // meters + top stats
+            document.getElementById('kpiAvgVal').textContent = kpiAvg;
+            document.getElementById('softPctVal').textContent = softPct;
+            document.getElementById('finalVal').textContent = final;
+
+            document.getElementById('kpiMeterFill').style.width  = kpiAvg + '%';
+            document.getElementById('softMeterFill').style.width = softPct + '%';
+            document.getElementById('finalMeterFill').style.width= final + '%';
+          }
+
+          document.addEventListener('input', e=>{
+            if(e.target.matches('.kpi-score')) e.target.value = clamp(e.target.value,0,100);
+            if(e.target.matches('.soft-score')) e.target.value = clamp(e.target.value,1,10);
+            recalc();
+          });
+          recalc();
+
+          // Self Eval modal logic
+          const btnSelf = document.getElementById('btnSelfEval');
+          const modalEl = document.getElementById('selfEvalModal');
+          const bsModal = new bootstrap.Modal(modalEl);
+          const body = document.getElementById('selfEvalBody');
+          const wrap = document.getElementById('selfEvalTableWrap');
+          const empty = document.getElementById('selfEvalEmpty');
+          const loading = document.getElementById('selfEvalLoading');
+
+          btnSelf.addEventListener('click', async () => {
+            body.innerHTML = '';
+            wrap.classList.add('d-none');
+            empty.classList.add('d-none');
+            loading.classList.remove('d-none');
+            bsModal.show();
+
+            try {
+              const res = await fetch('?handler=SelfEval&id=@Model.FormId', { cache: 'no-store' });
+              const rows = await res.json();
+              loading.classList.add('d-none');
+
+              if (!rows || rows.length === 0) {
+                empty.classList.remove('d-none');
+                return;
+              }
+
+              rows.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${r.title ?? ''}</td>
+                                <td>${r.description ?? ''}</td>
+                                <td class="text-center">${(r.achievementPercent ?? 0)}</td>`;
+                body.appendChild(tr);
+              });
+              wrap.classList.remove('d-none');
+            } catch {
+              loading.classList.add('d-none');
+              empty.classList.remove('d-none');
+              empty.textContent = 'Unable to load self-evaluation.';
+            }
+          });
+        })();
+    </script>
+}

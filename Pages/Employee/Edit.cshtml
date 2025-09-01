@@ -1,0 +1,32 @@
+﻿@*/Pages/Employee/Edit.cshtml*@
+
+@page
+@model AppraisalPortal.Pages.EmployeePages.EditModel
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Employee")]
+
+<h2>Self Review</h2>
+<form method="post" asp-page-handler="Save" asp-antiforgery="true">
+    <table class="table table-sm">
+        <thead><tr><th>Question</th><th>Rating (1-5)</th><th>Comment</th></tr></thead>
+        <tbody>
+            @foreach (var r in Model.Form.Responses)
+            {
+                <tr>
+                    <td>@r.Question.Text</td>
+                    <td><input name="self_@r.Id" type="number" min="1" max="@r.Question.MaxRating" value="@(r.SelfRating ?? 0)" class="form-control form-control-sm" /></td>
+                    <td><input name="selfc_@r.Id" value="@r.SelfComment" class="form-control form-control-sm" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-secondary">Save</button>
+</form>
+<form method="post" asp-page-handler="Submit" class="mt-2" asp-antiforgery="true">
+    <input type="hidden" name="id" value="@Model.Form.Id" />
+    <button class="btn btn-primary">Submit to Manager</button>
+</form>
+@if (TempData["Msg"] is string m)
+{
+    <p class="alert alert-success mt-2">@m</p>
+}

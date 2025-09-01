@@ -1,0 +1,108 @@
+﻿@page
+@model AppraisalPortal.Pages.Admin.ImportModel
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+
+<h2>Import Employees</h2>
+
+<div class="row g-3">
+    <!-- Upload -->
+    <div class="col-12 col-xxl-7">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" asp-antiforgery="true">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-12 col-md-8">
+                            <label class="form-label">Excel (.xlsx)</label>
+                            <input type="file" name="Upload" accept=".xlsx,.xls" required class="form-control" />
+                        </div>
+                        <div class="col-12 col-md-4 d-grid">
+                            <button class="btn btn-primary" type="submit">Upload</button>
+                        </div>
+                    </div>
+                </form>
+
+                @if (TempData["Msg"] is string m1)
+                {
+                    <p class="mt-2 alert alert-success mb-0">@m1</p>
+                }
+                @if (TempData["Err"] is string er1)
+                {
+                    <p class="mt-2 alert alert-danger mb-0">@er1</p>
+                }
+
+                <p class="mt-3">
+                    <strong>Template:</strong> SNO, EmpCode, EmployeeName, ReportingManagerName, ReportingManagerCode,
+                    Location, Department, Designation, DateOfJoining, DateOfBirth, Email
+                </p>
+                <p class="small text-muted">Date formats accepted: dd-MM-yyyy, dd/MM/yyyy, yyyy-MM-dd, Excel OADate.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="col-12 col-xxl-5">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header fw-semibold text-danger">Danger Zone – Wipe All Appraisal Data</div>
+            <div class="card-body">
+                <form method="post" asp-page-handler="Wipe" asp-antiforgery="true"
+                      onsubmit="return confirm('This will delete ALL appraisal data. Continue?');">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="alsoRemoveQuestions" id="alsoRemoveQuestions" />
+                        <label class="form-check-label" for="alsoRemoveQuestions">Also delete Questions</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="alsoDeleteUsers" id="alsoDeleteUsers" />
+                        <label class="form-check-label" for="alsoDeleteUsers">Also delete Identity users (except ADMIN, 90902)</label>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Type <code>WIPE ALL</code> to confirm</label>
+                        <input class="form-control" name="confirmText" />
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-outline-danger">Wipe All</button>
+                    </div>
+                </form>
+
+                @if (TempData["ErrWipe"] is string e1)
+                {
+                    <div class="alert alert-danger mt-3">@e1</div>
+                }
+                @if (TempData["MsgWipe"] is string m2)
+                {
+                    <div class="alert alert-success mt-3">@m2</div>
+                }
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header fw-semibold text-danger">Delete ONLY Employees (+ dependents)</div>
+            <div class="card-body">
+                <p class="text-muted">Keeps cycles, questions, and users (unless you tick delete users).</p>
+                <form method="post" asp-page-handler="WipeEmployees" asp-antiforgery="true"
+                      onsubmit="return confirm('Delete ALL employees and their dependent appraisal data?');">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="alsoDeleteUsers" id="delUsers2" />
+                        <label class="form-check-label" for="delUsers2">Also delete Identity users (except ADMIN, 90902)</label>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Type <code>WIPE EMPLOYEES</code> to confirm</label>
+                        <input class="form-control" name="confirmText" />
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-outline-danger">Delete Employees Only</button>
+                    </div>
+                </form>
+
+                @if (TempData["ErrWipeEmp"] is string e2)
+                {
+                    <div class="alert alert-danger mt-3">@e2</div>
+                }
+                @if (TempData["MsgWipeEmp"] is string m3)
+                {
+                    <div class="alert alert-success mt-3">@m3</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

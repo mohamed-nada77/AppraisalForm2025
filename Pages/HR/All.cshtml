@@ -1,0 +1,24 @@
+﻿@page
+@model AppraisalPortal.Pages.HR.AllModel
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "HR,Admin")]
+
+<h2>All Appraisals (HR)</h2>
+<table class="table table-sm">
+    <thead><tr><th>Employee</th><th>Cycle</th><th>Status</th><th>Final</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var f in Model.Items)
+        {
+            <tr>
+                <td>@f.Employee.Name</td>
+                <td>@f.Cycle.Name</td>
+                <td>@f.Status</td>
+                <td>@f.FinalScore</td>
+                <td class="d-flex gap-2">
+                    <a class="btn btn-sm btn-primary" asp-page="/HR/Review" asp-route-id="@f.Id">Review</a>
+                    <a class="btn btn-sm btn-outline-secondary" asp-page="/Reports/Summary" asp-route-id="@f.Id">Summary</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

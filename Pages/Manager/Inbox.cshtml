@@ -1,0 +1,65 @@
+﻿@*/Pages/Manager/Inbox.cshtml*@
+
+@page
+@model AppraisalPortal.Pages.ManagerPages.InboxModel
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Manager,Admin")]
+
+<h2>Manager Inbox</h2>
+
+@if (!Model.ToReview.Any() && !Model.Drafts.Any() && !Model.InReview.Any())
+{
+    <p class="text-muted">No items for your team yet.</p>
+}
+
+@if (Model.ToReview.Any())
+{
+    <h5 class="mt-3">Submitted – awaiting your review</h5>
+    <table class="table table-sm">
+        <thead><tr><th>Employee</th><th>Cycle</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var f in Model.ToReview)
+            {
+                <tr>
+                    <td>@f.Employee.Name</td>
+                    <td>@f.Cycle.Name</td>
+                    <td>@f.Status</td>
+                    <td><a class="btn btn-sm btn-primary" href="/Manager/Review?id=@f.Id">Review</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (Model.Drafts.Any())
+{
+    <h5 class="mt-4">Not submitted yet</h5>
+    <table class="table table-sm">
+        <thead><tr><th>Employee</th><th>Cycle</th><th>Status</th></tr></thead>
+        <tbody>
+            @foreach (var f in Model.Drafts)
+            {
+                <tr><td>@f.Employee.Name</td><td>@f.Cycle.Name</td><td>@f.Status</td></tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (Model.InReview.Any())
+{
+    <h5 class="mt-4">In manager review</h5>
+    <table class="table table-sm">
+        <thead><tr><th>Employee</th><th>Cycle</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var f in Model.InReview)
+            {
+                <tr>
+                    <td>@f.Employee.Name</td>
+                    <td>@f.Cycle.Name</td>
+                    <td>@f.Status</td>
+                    <td><a class="btn btn-sm btn-outline-secondary" href="/Manager/Review?id=@f.Id">Re-open</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

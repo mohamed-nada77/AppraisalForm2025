@@ -1,0 +1,115 @@
+﻿@page
+@model AppraisalPortal.Pages.IndexModel
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+@{
+    ViewData["Title"] = "Home";
+}
+
+@if (Model.IsSignedIn)
+{
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                <div>
+                    <h1 class="h4 mb-1">Welcome, @Model.WelcomeName!</h1>
+                    <div class="text-muted">
+                        <span class="me-3"><i class="bi bi-building"></i> @(Model.Department ?? "Unassigned")</span>
+                        @if (!string.IsNullOrWhiteSpace(Model.ManagerDisplay))
+                        {
+                            <span class="me-3"><i class="bi bi-person-workspace"></i> Manager: @Model.ManagerDisplay</span>
+                        }
+                        <span class="me-3"><i class="bi bi-hash"></i> ID: @Model.EmpCode</span>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-3" />
+
+            <p class="text-muted mb-3">Choose where you’d like to go:</p>
+            <div class="row g-3">
+                @if (Model.IsEmployee)
+                {
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <a class="btn btn-outline-primary w-100 py-3" asp-page="/Employee/Appraisals">
+                            <i class="bi bi-person-badge me-2"></i> My Appraisals
+                        </a>
+                    </div>
+                }
+                @if (Model.IsManagerLike)
+                {
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <a class="btn btn-outline-primary w-100 py-3" asp-page="/Manager/Inbox">
+                            <i class="bi bi-inbox me-2"></i> Manager Inbox
+                        </a>
+                    </div>
+                }
+                @if (Model.IsHR || Model.IsCEO || Model.IsAdmin)
+                {
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <a class="btn btn-outline-primary w-100 py-3" asp-page="/Reports/Summary">
+                            <i class="bi bi-clipboard-data me-2"></i> Reports
+                        </a>
+                    </div>
+                }
+                @if (Model.IsAdmin)
+                {
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <a class="btn btn-outline-secondary w-100 py-3" asp-page="/Admin/Import">
+                            <i class="bi bi-upload me-2"></i> Admin – Import
+                        </a>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <a class="btn btn-outline-secondary w-100 py-3" asp-page="/Admin/Cycles">
+                            <i class="bi bi-calendar2-range me-2"></i> Admin – Cycles
+                        </a>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <a class="btn btn-outline-secondary w-100 py-3" asp-page="/Admin/Scopes">
+                            <i class="bi bi-diagram-3 me-2"></i> Admin – Scopes
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <style>
+        body {
+            background: #fff !important
+        }</style>
+
+    <div class="d-flex align-items-center justify-content-center" style="min-height: calc(100vh - 2rem);">
+        <div class="col-11 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+            <h1 class="h4 mb-4 text-center">Sign in</h1>
+
+            <form method="post" asp-page-handler="Login" asp-antiforgery="true" class="vstack gap-3">
+                <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
+
+                <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+
+                <div>
+                    <label class="form-label" for="emp">Emp Code</label>
+                    <input id="emp" name="Input.EmpCode" class="form-control" autocomplete="username" />
+                </div>
+
+                <div>
+                    <label class="form-label" for="pwd">Password</label>
+                    <input id="pwd" name="Input.Password" type="password" class="form-control" autocomplete="current-password" />
+                </div>
+
+                <div class="form-check">
+                    <input id="rm" name="Input.RememberMe" class="form-check-input" type="checkbox" />
+                    <label for="rm" class="form-check-label">Remember me</label>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Sign in</button>
+                </div>
+            </form>
+        </div>
+    </div>
+}

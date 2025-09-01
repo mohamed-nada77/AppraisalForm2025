@@ -1,0 +1,40 @@
+﻿@page
+@model AppraisalPortal.Pages.HR.ReviewModel
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "HR,Admin")]
+
+<h2>HR Review – @Model.EmployeeName (@Model.CycleName)</h2>
+
+<div class="mb-3">
+  <a class="btn btn-outline-secondary btn-sm" asp-page="/Reports/Summary" asp-route-id="@Model.FormId">Open Summary</a>
+  <a class="btn btn-outline-secondary btn-sm" asp-page="/Reports/FormPdf" asp-route-id="@Model.FormId">Download PDF</a>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header">Computed Scores</div>
+  <div class="card-body">
+    <div class="row g-2">
+      <div class="col-md-3"><strong>KPI %:</strong> @Model.KpiPercent</div>
+      <div class="col-md-3"><strong>Soft %:</strong> @Model.SoftPercent</div>
+      <div class="col-md-3"><strong>Weighted KPI (70%):</strong> @Model.KpiWeighted</div>
+      <div class="col-md-3"><strong>Weighted Soft (30%):</strong> @Model.SoftWeighted</div>
+    </div>
+    <div class="mt-2"><strong>Final:</strong> @Model.FinalScore</div>
+  </div>
+</div>
+
+<form method="post" asp-page-handler="Approve" asp-antiforgery="true">
+  <input type="hidden" name="id" value="@Model.FormId" />
+  <div class="mb-3">
+    <label class="form-label">HR Comments</label>
+    <textarea class="form-control" name="HRComments" rows="3">@Model.HRComments</textarea>
+  </div>
+  <div class="d-flex gap-2">
+    <button class="btn btn-primary">Approve</button>
+  </div>
+</form>
+
+@if (!string.IsNullOrWhiteSpace(Model.Error))
+{
+    <div class="alert alert-danger mt-3">@Model.Error</div>
+}

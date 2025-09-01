@@ -1,0 +1,148 @@
+/* /wwwroot/css/site.css */
+:root {
+    --brand: #0d6efd;
+    --ink: #212529;
+    --muted: #6c757d;
+    --bg: #f5f6f8;
+    --card: #ffffff;
+    --line: #eceff3;
+}
+
+html, body {
+    background: var(--bg);
+}
+
+.card {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+}
+
+.card-header {
+    background: linear-gradient(180deg,#fafbfd,#f2f4f8);
+    font-weight: 600;
+}
+
+.card.shadow-sm {
+    box-shadow: 0 6px 18px rgba(33,37,41,.04) !important
+}
+
+.section-title {
+    letter-spacing: .06em;
+    font-size: .82rem;
+    color: var(--muted);
+    text-transform: uppercase
+}
+
+.nav-link {
+    color: #2b2f36
+}
+
+    .nav-link .bi {
+        opacity: .75;
+        margin-right: .35rem
+    }
+
+    .nav-link.active, .nav-link:hover {
+        color: var(--brand)
+    }
+
+        .nav-link.active .bi {
+            opacity: 1
+        }
+
+.badge-status {
+    border: 1px solid var(--line);
+    background: #fff;
+    color: #111;
+    font-weight: 500
+}
+
+    .badge-status.approved {
+        background: #e6f4ea;
+        border-color: #c9e7d1;
+        color: #146c2e
+    }
+
+    .badge-status.mgr {
+        background: #fff7e6;
+        border-color: #ffecb5;
+        color: #a07900
+    }
+
+.table-clean thead th {
+    background: #f7f8fb;
+    border-bottom: 1px solid var(--line)
+}
+
+.table-clean td, .table-clean th {
+    border-color: var(--line)
+}
+
+.table-zebra tbody tr:nth-of-type(odd) {
+    background: #fafbfc
+}
+
+.kpi-meter, .soft-meter, .final-meter {
+    height: 10px;
+    border-radius: 6px;
+    background: #edeeee;
+    overflow: hidden
+}
+
+    .kpi-meter > div, .soft-meter > div, .final-meter > div {
+        height: 100%
+    }
+
+    .kpi-meter > div {
+        background: #0d6efd
+    }
+
+    .soft-meter > div {
+        background: #6f42c1
+    }
+
+    .final-meter > div {
+        background: #198754
+    }
+
+.form-hint {
+    font-size: .84rem;
+    color: var(--muted)
+}
+
+.is-invalid + .invalid-feedback {
+    display: block
+}
+
+/* Toasts */
+#toastHost {
+    position: fixed;
+    z-index: 1080;
+    top: 1rem;
+    right: 1rem
+}
+
+/* Small utilities */
+.stat {
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    padding: 12px
+}
+
+    .stat .value {
+        font-size: 1.25rem;
+        font-weight: 700
+    }
+
+    .stat .label {
+        font-size: .8rem;
+        color: var(--muted)
+    }
+
+/* Truncate long names gracefully */
+.truncate {
+    max-width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
