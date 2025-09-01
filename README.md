@@ -1,230 +1,237 @@
-# AppraisalPortal
+---8<--- COPY FROM HERE ---8<---
 
-AppraisalPortal is a **.NET 8 Razor Pages** application that streamlines end-to-end **employee performance appraisals**. It replaces scattered spreadsheets and email threads with a **clear, role-based workflow** and **consistent scoring**, plus **PDF outputs** for official records.
+AppraisalForm2025
 
-## 💡 What it solves
+AppraisalForm2025 is a .NET 8 Razor Pages application that streamlines end-to-end employee performance appraisals. It replaces scattered spreadsheets and email threads with a clear, role-based workflow, consistent scoring, and PDF outputs for official records.
 
-- **Consistency:** Everyone follows the same forms, scales, and weights (no more custom Excel formulas).
-- **Clarity:** Employees, managers, HR, and the CEO each get purpose-built pages with the exact actions they need.
-- **Speed:** Automated roll-ups, scoring, approvals, and one-click PDF export.
-- **Auditability:** Every submitted form has an immutable PDF and a summary report.
+Support (first-time login & general help):
+If you face any issue or need assistance, please contact: mohamed@alpagoproperties.com
+ · +971 52 885 8560
 
----
+🎯 What it solves
 
-## 🧭 Workflow (at a glance)
+Consistency: Everyone follows the same forms, scales, and weights (no more one-off Excel formulas).
 
+Clarity: Employees, Managers, HR, and the CEO each get purpose-built pages with only the actions they need.
+
+Speed: Automated roll-ups, scoring, approvals, and one-click PDF export.
+
+Auditability: Every submitted form has a permanent PDF and a cycle summary.
+
+🧭 Workflow (at a glance)
 Employee (Self-Assessment)
-│
-▼
+     │
+     ▼
 Reporting Manager (Review & Adjust)
-│
-▼
+     │
+     ▼
 HR (All forms view + Approval gate)
-│ (if approved)
-▼
+     │  (if approved)
+     ▼
 CEO (Download PDFs + Executive Summary)
 
-markdown
-Copy code
 
-- **Employee** fills their **Self** appraisal (responsibilities, KPI items, soft skills).
-- **Reporting Manager** reviews the employee’s form, can **adjust ratings** and add comments.
-- **HR** has visibility across **all forms** (by department or company-wide), ensures **policy compliance**, and approves the cycle.
-- **CEO** sees a consolidated **summary** and can **download PDFs** for official storage or circulation.
+Employee completes their Self appraisal (Responsibilities, KPI items, Soft skills).
 
----
+Reporting Manager reviews and can adjust ratings / add comments.
 
-## 🧱 Key Features
+HR has full visibility across all forms, ensures policy compliance, and approves the cycle.
 
-- **Identity & Access**
-  - ASP.NET Core Identity with **EmpCode as username**.
-  - **MustChangePassword** on first login with a **ForceChange** page.
-  - **Claims transformer** assigns **Manager** role automatically when a user has a defined manager scope.
+CEO sees summary insights and downloads PDFs for official records.
 
-- **Domain**
-  - **Responsibilities** (self text inputs)
-  - **KPIItems** (scored 0–100)
-  - **SoftSkillRatings** (scored 1–10)
-  - **ManagerScope** and **Departments** for access control
+🧱 Key Features
 
-- **Scoring**
-  - Final score = **KPI 70% + Soft Skills 30%** (via `ScoringService`)
+Identity & Access
 
-- **Admin**
-  - **Import** (ClosedXML) to ingest employees and scopes from Excel
-  - **Cycles** to open/close appraisal rounds
-  - **Scopes** to define reporting structures
-  - **Passwords** to generate initial passwords by rule
-  - **ManagerCheck** to validate scopes/claims alignment
+ASP.NET Core Identity with EmpCode as username.
 
-- **Reports & PDFs**
-  - **Form PDF** and **Summary PDF** generated with **QuestPDF**
-  - Clean layout suitable for HR files and executive briefings
+MustChangePassword on first login with a dedicated Force-Change page.
 
-- **Dashboards**
-  - **Manager**: Inbox & Review
-  - **HR**: All/Review and **Reports → Summary**
-  - **CEO**: Executive overview & **Download PDFs**
+Claims transformer assigns Manager role automatically when a user has a defined ManagerScope (departments/teams).
 
----
+Domain Model
 
-## 🧩 Why this workflow benefits many companies
+Responsibilities (self text inputs)
 
-- **SMBs to Enterprise:** Any org with a reporting structure and periodic performance reviews (quarterly, bi-annual, annual) can use it.
-- **Multi-Department Fit:** Manager scopes + departments mean multiple teams can run the **same** appraisal cycle without cross-contamination.
-- **Remote/Hybrid-Ready:** Role-based access and PDFs keep stakeholders aligned across geographies.
-- **Policy-Aligned:** HR approval gate enforces consistent criteria before executive sign-off.
-- **Auditable Results:** PDFs + clear scoring rules build trust and reduce disputes.
+KPIItems (0–100)
 
----
+SoftSkillRatings (1–10)
 
-## 🧮 Scoring Model
+ManagerScope (+ departments) for access control
 
-- **KPI items:** numeric (0–100), weighted into a KPI subtotal.
-- **Soft skills:** numeric (1–10), normalized to a soft-skills subtotal.
-- **Final score:** `Final = KPI * 0.70 + SoftSkills * 0.30`.
+Scoring
 
-You can adjust weights in `ScoringService` if your company uses a different model.
+Final score = KPI 70% + Soft Skills 30% (via ScoringService).
 
----
+Swap weights easily to fit different company policies.
 
-## 🖥️ Tech Stack
+Administration
 
-- **Backend/UI:** ASP.NET Core **.NET 8** (Razor Pages)
-- **Auth:** ASP.NET Core Identity (EmpCode as username)
-- **PDFs:** QuestPDF
-- **Import:** ClosedXML (.xlsx)
-- **UI Kit:** Bootstrap + jQuery (in `wwwroot/lib`)
-- **DB:** EF Core Migrations
+Import (ClosedXML) to ingest employees/scopes from Excel.
 
----
+Cycles to open/close appraisal rounds.
 
-## 📁 Repository Structure
+Scopes to define reporting structures.
 
-AppraisalPortal/
-├─ Areas/Identity/... # Login/ForceChange etc.
-├─ Data/ # EF DbContext, SeedData
-├─ Migrations/ # EF Core migrations
-├─ Models/ # AppUser, AppraisalCycle, Form, KPIItem, ...
+Passwords to generate initial passwords by rule.
+
+ManagerCheck to validate scope & claims alignment.
+
+Reports & PDFs
+
+Form PDF (final appraisal) and Summary PDF (company/department overview) via QuestPDF.
+
+Clean, print-ready layout.
+
+Role Dashboards
+
+Manager: Inbox & Review
+
+HR: All/Review and Reports → Summary
+
+CEO: Executive overview & Download PDFs
+
+🖥️ Tech Stack
+
+Framework: ASP.NET Core .NET 8 (Razor Pages)
+
+Auth: ASP.NET Core Identity (EmpCode username)
+
+PDF: QuestPDF
+
+Excel Import: ClosedXML (.xlsx)
+
+UI: Bootstrap + jQuery (in wwwroot/lib)
+
+Data: EF Core + Migrations
+
+📁 Project Structure (high level)
+Root/
+├─ Areas/Identity/...      # Login, ForceChange
+├─ Data/                   # EF DbContext, SeedData
+├─ Migrations/             # EF Core migrations
+├─ Models/                 # AppUser, AppraisalCycle, Form, KPIItem, Responsibility, SoftSkillRating, ManagerScope...
 ├─ Pages/
-│ ├─ Admin/ # Import, Cycles, Scopes, Passwords, ManagerCheck
-│ ├─ Employee/ # Self, Appraisals
-│ ├─ Manager/ # Inbox, Review
-│ ├─ HR/ # All, Review
-│ ├─ CEO/ # All/summary views & downloads
-│ └─ Reports/ # FormPdf, Summary
-├─ Security/ # ScopeRoleClaimsTransformer
-├─ Services/ # ScoringService, PdfService, EmployeeImportService, PasswordRuleService
-└─ wwwroot/ # Static assets (bootstrap, jquery, css, images)
+│  ├─ Admin/               # Import, Cycles, Scopes, Passwords, ManagerCheck
+│  ├─ Employee/            # Self, Appraisals
+│  ├─ Manager/             # Inbox, Review
+│  ├─ HR/                  # All, Review
+│  ├─ CEO/                 # Executive views & downloads
+│  └─ Reports/             # FormPdf, Summary
+├─ Security/               # ScopeRoleClaimsTransformer
+├─ Services/               # ScoringService, PdfService, EmployeeImportService, PasswordRuleService
+└─ wwwroot/                # Static assets (bootstrap, jquery, css, images)
 
-yaml
-Copy code
+🚀 Getting Started (Local)
+Prerequisites
 
----
+.NET 8 SDK
 
-## 🚀 Getting Started (Local)
+SQL Server (Developer/Express or container)
 
-### Prerequisites
-- **.NET 8 SDK**
-- SQL Server (Developer/Express or a container)
-- Git
+Git
 
-### 1) Clone & restore
-```powershell
-git clone https://github.com/<your-account>/AppraisalPortal.git
-cd AppraisalPortal
+1) Restore dependencies
 dotnet restore
-2) Configure secrets (keep real secrets out of git)
-Use User Secrets for local development:
 
-powershell
-Copy code
+2) Configure secrets (keep real secrets out of Git)
+
+Use User Secrets for development:
+
 dotnet user-secrets init
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=.;Database=AppraisalPortal;Trusted_Connection=True;TrustServerCertificate=True"
-# If using certificate passwords, tokens, SMTP, etc.:
+# Optional examples:
 # dotnet user-secrets set "Certificates:Password" "YOUR_CERT_PASSWORD"
-Create an example file for collaborators (no secrets):
+# dotnet user-secrets set "Smtp:Host" "smtp.example.com"
 
-json
-Copy code
+
+Include a non-secret example for collaborators (commit this):
+
 // appsettings.json.example
 {
-  "ConnectionStrings": {
-    "DefaultConnection": "<set via user-secrets or environment>"
-  },
-  "Logging": {
-    "LogLevel": { "Default": "Information", "Microsoft.AspNetCore": "Warning" }
-  }
+  "ConnectionStrings": { "DefaultConnection": "<set via user-secrets or environment>" },
+  "Logging": { "LogLevel": { "Default": "Information", "Microsoft.AspNetCore": "Warning" } }
 }
-3) Database
-powershell
-Copy code
+
+
+Tip: Add real appsettings.json and appsettings.*.local.json to .gitignore. Use environment variables or secrets in production.
+
+3) Database migration
 dotnet ef database update
-4) Seed roles & demo users (optional)
-SeedData can set up baseline roles (Admin/Manager/HR/CEO) and example scopes. Adjust SeedData as needed, then run the app so seeding executes.
+
+4) Seeding (optional)
+
+SeedData can create baseline roles (Admin/Manager/HR/CEO) and demo users/scopes. Adjust if needed, then run the app to execute seeding.
 
 5) Run
-powershell
-Copy code
 dotnet run
-Visit https://localhost:5001 (or the port shown in output).
 
-🔐 Roles & Access
-Employee: Self-appraisal, can revisit before submission (if cycle open).
 
-Reporting Manager: Reviews assigned team forms, can adjust and comment.
+Open the URL shown in the console (e.g., https://localhost:5001).
 
-HR: Full visibility, ensures policy compliance, tracks cycle progress, approves.
+🔐 Roles & Permissions
 
-CEO: High-level summary & PDF download for finalized/approved forms.
+Employee: Self-appraisal (can revise while cycle open).
 
-Admin: Imports, cycles, scopes, password rules, manager checks.
+Reporting Manager: Reviews assigned team forms, adjusts ratings, adds comments.
 
-First login requires password change (MustChangePassword) for security.
+HR: Full visibility, policy gatekeeper, cycle approval.
 
-📥 Importing Employees & Scopes
+CEO: High-level summaries and PDF downloads.
+
+Admin: Imports, cycles, scopes, password rules, scope validation.
+
+First-time login experience: Users are greeted, asked to change their password (MustChangePassword), and shown a professional welcome note plus support contact for any issues.
+
+📥 Importing Employees & Scopes (Excel)
+
 Go to Admin → Import.
 
-Upload an .xlsx file exported from your HRIS or a clean spreadsheet.
+Upload a clean .xlsx file (export from HRIS or a curated template).
 
-The import service (ClosedXML) maps users, departments, and manager scopes.
+The EmployeeImportService maps users, departments, and ManagerScope.
 
-After import, ManagerCheck validates that scope assignments match expectations.
+Use ManagerCheck to verify scopes & access are correct.
 
-Tip: Keep a master HR spreadsheet template in your company drive so each cycle uses the same column names and formats.
+Keep a master HR template in your drive so every cycle uses consistent columns.
 
 🧾 PDF Outputs
-Form PDF: The full, finalized appraisal (employee + manager review).
 
-Summary PDF: Executive-friendly summary across departments.
+Form PDF: Final, signed-off appraisal (employee + manager sections).
 
-Generated with QuestPDF for consistent, print-ready output.
+Summary PDF: A department/company overview for HR/CEO.
 
-🏢 Who can benefit?
-SMEs (50–500 employees): Replace manual spreadsheets and email approvals with a structured, role-based flow.
+Built with QuestPDF for consistent, print-ready documents.
 
-Mid-market (500–5,000): Manager scopes + department views scale cleanly across org layers and regions.
+🧮 Scoring Model (default)
 
-Enterprises: Clear separation of duties (Employee → Manager → HR → CEO), consistent scoring, and PDF archives for audits.
+KPI items: numeric 0–100 → KPI subtotal.
 
-Hybrid/Remote teams: Keep reviews standardized and transparent regardless of location.
+Soft skills: numeric 1–10 → normalized soft-skills subtotal.
 
-🛠️ Configuration & Deployment
-Environments: Use appsettings.{Environment}.json + environment variables. Keep real secrets in KeyVault/Secrets Manager or machine secrets.
+Final score:
 
-Windows/IIS: Run behind IIS with the ASP.NET Core Module.
+Final = KPI * 0.70 + SoftSkills * 0.30
 
-Linux/Nginx: Run Kestrel behind Nginx as a reverse proxy.
 
-Containers: Add a Dockerfile if you want containerized deploys (not included by default).
+Weights are centralized in ScoringService and easy to change.
 
-🗺️ Roadmap (suggested)
-Calibration view for HR across managers
+🏢 Who Benefits & Why
 
-Per-department weighting overrides
+SMEs (50–500 employees): Replace manual spreadsheets and email approvals with a single source of truth.
 
-E-signatures on PDFs
+Mid-market (500–5,000): Manager scopes + department views scale across org layers and regions.
 
-Email/Teams notifications for stage transitions
+Enterprises: Clear separation of duties (Employee → Manager → HR → CEO), consistent scoring, and auditable PDF records.
 
-Analytics: distribution charts, outliers, year-over-year trends
+Hybrid/Remote: Role-based access and PDF outputs keep evaluations standardized across locations/time zones.
+
+Benefits across the board:
+
+Faster cycles and less admin work
+
+Fairer, consistent evaluations
+
+Stronger compliance and audit trail
+
+Clear executive visibility
