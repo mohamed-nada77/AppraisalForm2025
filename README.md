@@ -14,14 +14,27 @@ AppraisalForm2025 is a **.NET 8 Razor Pages** application that streamlines end-t
 ## 🧭 Workflow (at a glance)
 
 Employee (Self-Assessment)
+
+
 │
 ▼
+
+
 Reporting Manager (Review & Adjust)
+
+
 │
 ▼
+
+
 HR (All forms view + Approval gate)
+
+
 │ (if approved)
 ▼
+
+
+
 CEO (Download PDFs + Executive Summary)
 
 markdown
@@ -103,19 +116,33 @@ You can adjust weights in `ScoringService` if your company uses a different mode
 
 Root/
 ├─ Areas/Identity/... # Login/ForceChange etc.
+
 ├─ Data/ # EF DbContext, SeedData
+
 ├─ Migrations/ # EF Core migrations
+
 ├─ Models/ # AppUser, AppraisalCycle, Form, KPIItem, ...
+
 ├─ Pages/
+
 │ ├─ Admin/ # Import, Cycles, Scopes, Passwords, ManagerCheck
+
 │ ├─ Employee/ # Self, Appraisals
+
 │ ├─ Manager/ # Inbox, Review
+
 │ ├─ HR/ # All, Review
+
 │ ├─ CEO/ # All/summary views & downloads
+
 │ └─ Reports/ # FormPdf, Summary
+
 ├─ Security/ # ScopeRoleClaimsTransformer
+
 ├─ Services/ # ScoringService, PdfService, EmployeeImportService, PasswordRuleService
+
 └─ wwwroot/ # Static assets (bootstrap, jquery, css, images)
+
 
 yaml
 Copy code
@@ -238,24 +265,6 @@ Add/Update EF migrations where applicable.
 
 Include brief notes in PR description.
 
-📄 License
-Choose a license (e.g., MIT) or keep private.
-"@ | Set-Content -Encoding utf8 README.md
-
-git add README.md
-git commit -m "Add comprehensive README (workflow, roles, scoring, setup, PDFs)"
-git push
-
-markdown
-Copy code
-
-That’s it—your code is in **AppraisalForm2025**, and the README is live.
-
----
-
-## Quick troubleshooters
-- **“Repository not found”** → Make sure the repo exists under **mohamed-nada77** and the remote URL matches exactly.  
-- **Browser login pops up** → Log in as **mohamed-nada77**. If wrong account was saved, remove `git:https://github.com` from **Credential Manager** and push again.  
 - **Remote already exists** → Use `git remote set-url origin https://github.com/mohamed-nada77/AppraisalForm2025.git`.
 
 If you hit any error, paste the exact message and I’ll fix it right away.
