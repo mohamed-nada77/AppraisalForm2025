@@ -42,7 +42,6 @@ CEO (Download PDFs + Executive Summary)
 markdown
 Copy code
 
-<img width="961" height="421" alt="image" src="https://github.com/user-attachments/assets/e1857b78-2a82-46b7-b88b-c1f2cdfb0e1e" />
 
 
 - **Employee** fills their **Self** appraisal (responsibilities, KPI items, soft skills).
@@ -260,6 +259,15 @@ powershell
 Copy code
 dotnet run
 Visit https://localhost:5001 (or the port shown in output).
+
+
+<img width="961" height="421" alt="image" src="https://github.com/user-attachments/assets/e1857b78-2a82-46b7-b88b-c1f2cdfb0e1e" />
+
+<img width="860" height="761" alt="image" src="https://github.com/user-attachments/assets/06ab7331-ed7a-49a2-9c5d-31ec5ea51cf3" />
+
+<img width="1085" height="654" alt="image" src="https://github.com/user-attachments/assets/7e51cdcb-a538-4879-ace7-8f9c02f11dbd" />
+
+<img width="1919" height="875" alt="image" src="https://github.com/user-attachments/assets/7ca81b8e-464f-452c-8fe4-9fa137878460" />
 
 
 
