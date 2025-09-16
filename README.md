@@ -42,6 +42,9 @@ CEO (Download PDFs + Executive Summary)
 markdown
 Copy code
 
+<img width="961" height="421" alt="image" src="https://github.com/user-attachments/assets/e1857b78-2a82-46b7-b88b-c1f2cdfb0e1e" />
+
+
 - **Employee** fills their **Self** appraisal (responsibilities, KPI items, soft skills).
 - **Reporting Manager** reviews the employee’s form, can **adjust ratings** and add comments.
 - **HR** has visibility across **all forms** (by department or company-wide), ensures **policy compliance**, and approves the cycle.
